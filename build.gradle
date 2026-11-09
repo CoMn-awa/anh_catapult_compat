@@ -1,0 +1,52 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+version = project.mod_version
+group = project.mod_group_id
+
+base {
+    archivesName = project.mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+repositories {
+    repositories.clear()
+    maven { url = "https://libraries.minecraft.net/" }
+    maven { url = "https://neoforged.forgecdn.net/releases" }
+    maven { url = "https://neoforged.forgecdn.net/mojang-meta" }
+}
+
+neoForge {
+    version = project.neo_version
+
+    mods {
+        "${project.mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+dependencies {
+    // Compile against the installed addons without bundling them into the patch jar.
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    manifest {
+        attributes([
+            'Specification-Title'     : project.mod_name,
+            'Specification-Vendor'    : project.mod_group_id,
+            'Specification-Version'   : project.mod_version,
+            'Implementation-Title'    : project.mod_name,
+            'Implementation-Version'  : project.mod_version,
+            'Implementation-Vendor'   : project.mod_group_id
+        ])
+    }
+}

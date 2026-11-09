@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Server",
+      "presentation": {
+        "group": "Mod Development - anh_catapult_compat",
+        "order": 0
+      },
+      "projectName": "anh_catapult_compat",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\githubmod\\anh_catapult_compat\\build\\moddev\\serverRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\githubmod\\anh_catapult_compat\\build\\moddev\\serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003danh_catapult_compat%%D:\\githubmod\\anh_catapult_compat\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    }
+  ]
+}
