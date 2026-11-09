@@ -1,0 +1,15 @@
+# Gradle 构建缓存与产物
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# 开发测试运行目录
+run/
+
+# IDE
+.idea/
+*.iml
+
+# 仅用于编译的第三方 jar（不随仓库分发）
+libs/
+*.jar

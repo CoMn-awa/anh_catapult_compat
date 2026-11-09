@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Specification-Title: ANH Catapult Compat
-Specification-Vendor: com.anhcompat
-Specification-Version: 1.0.0
-Implementation-Title: ANH Catapult Compat
-Implementation-Version: 1.0.0
-Implementation-Vendor: com.anhcompat
-
