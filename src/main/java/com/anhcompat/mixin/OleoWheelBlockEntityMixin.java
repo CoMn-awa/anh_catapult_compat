@@ -6,6 +6,10 @@ import com.github.aero_no_horizon.trackwork.content.track.OleoWheelBlock;
 import com.github.aero_no_horizon.trackwork.content.track.OleoWheelBlockEntity;
 import com.pb7ap8lthh.controlengineering.integration.gearwork.synaxis.physics.GearworkSuspensionOverrideAccess;
 import com.pb7ap8lthh.controlengineering.integration.gearwork.synaxis.physics.GearworkSuspensionOverrides;
+import com.verr1.synaxis.foundation.physics.BodyId;
+import com.verr1.synaxis.foundation.physics.SynaxisPhysics;
+import com.verr1.synaxis.foundation.physics.WorldBlockPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +30,9 @@ public abstract class OleoWheelBlockEntityMixin
         implements AnhOleoWheelAccess, GearworkSuspensionOverrideAccess {
     @Unique
     private GearworkSuspensionOverrides.Slot anhcompat$slot;
+
+    @Unique
+    private double anhcompat$frozenCompression = Double.NaN;
 
     @Shadow
     private float suspensionTravel;
@@ -105,7 +112,35 @@ public abstract class OleoWheelBlockEntityMixin
     @Override
     public double anhcompat$leaseCompressionOrNaN() {
         GearworkSuspensionOverrides.Slot slot = this.anhcompat$slot;
-        return slot == null ? Double.NaN : slot.compressionOr(Double.NaN);
+        OleoWheelBlockEntity self = (OleoWheelBlockEntity) (Object) this;
+        Level level = self.getLevel();
+        if (slot == null || level == null || level.isClientSide) {
+            this.anhcompat$frozenCompression = Double.NaN;
+            return Double.NaN;
+        }
+        BlockPos pos = self.getBlockPos();
+        BodyId body = SynaxisPhysics.bodyAt(level, pos).orElse(null);
+        if (body == null || body.isGround()) {
+            this.anhcompat$frozenCompression = Double.NaN;
+            return Double.NaN;
+        }
+        // The catapult's suspension simulation publishes a live compression through the
+        // slot, but the default (hard hinge) capture mode never switches the lease to
+        // simulating: it only claims it. Reading the slot alone therefore reports "no
+        // lease" in that mode, which left the native strut running against the hinge.
+        if (GearworkSuspensionOverrides.suppressesNativeSolve(body, WorldBlockPos.of(level, pos))) {
+            double simulated = slot.compressionOr(Double.NaN);
+            this.anhcompat$frozenCompression = simulated;
+            return simulated;
+        }
+        if (GearworkSuspensionOverrides.claimed(body, pos)) {
+            if (Double.isNaN(this.anhcompat$frozenCompression)) {
+                this.anhcompat$frozenCompression = anhcompat$compression();
+            }
+            return this.anhcompat$frozenCompression;
+        }
+        this.anhcompat$frozenCompression = Double.NaN;
+        return Double.NaN;
     }
 
     @Override
