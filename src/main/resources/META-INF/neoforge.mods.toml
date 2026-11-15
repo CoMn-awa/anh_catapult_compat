@@ -4,7 +4,7 @@ license = "MIT"
 
 [[mods]]
 modId = "anh_catapult_compat"
-version = "1.0.0"
+version = "1.0.2"
 displayName = "ANH Catapult Compat"
 description = '''
 Allows the Control Engineering catapult to capture and launch aircraft that use
@@ -28,7 +28,7 @@ side = "BOTH"
 [[dependencies.anh_catapult_compat]]
 modId = "control_engineering"
 type = "required"
-versionRange = "[1.4.6,)"
+versionRange = "[1.4.8,1.5)"
 ordering = "AFTER"
 side = "BOTH"
 
